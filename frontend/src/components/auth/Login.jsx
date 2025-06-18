@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setLoading, setUser } from "@/redux/authSlice";
 import { Loader2, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
+import { useAuth } from "../../context/AuthContext";
 
 const Login = () => {
   const [input, setInput] = useState({
@@ -21,6 +22,7 @@ const Login = () => {
   });
 
   const { loading } = useSelector((store) => store.auth);
+  const { login: authLogin, token: authToken } = useAuth();
   useEffect(() => {
     dispatch(setLoading(false)); // Reset loading on mount
   }, []);
@@ -42,21 +44,21 @@ const Login = () => {
     try {
       dispatch(setLoading(true));
 
-      const res = await axios.post(`${apiUrl}/api/v1/login`, input, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
-      });
+      // Use AuthContext login
+      const loginRes = await authLogin(input.email, input.password, input.role);
+      console.log("[Login.jsx] AuthContext login response:", loginRes);
+      console.log("[Login.jsx] Token after login:", localStorage.getItem("token"));
 
-      if (res.data.success) {
-        dispatch(setUser(res.data.user));
+      if (loginRes.success) {
+        dispatch(setUser(loginRes.user));
         if (input.role === "admin") {
           navigate("/admin");
         } else {
           navigate("/");
         }
-        toast.success(res.data.message);
+        toast.success("Login successful");
+      } else {
+        toast.error(loginRes.error || "Login failed");
       }
     } catch (error) {
       console.log(error);
