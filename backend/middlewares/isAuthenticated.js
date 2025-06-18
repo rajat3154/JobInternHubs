@@ -11,9 +11,10 @@ const isAuthenticated = async (req, res, next) => {
             if (!token && req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
                   token = req.headers.authorization.split(' ')[1];
             }
-            console.log(token)
+            console.log("[isAuthenticated] Received token:", token);
             // Check if token exists
             if (!token) {
+                  console.warn("[isAuthenticated] No token provided");
                   return res.status(401).json({
                         message: "User not authenticated, token missing",
                         success: false,
@@ -21,7 +22,17 @@ const isAuthenticated = async (req, res, next) => {
             }
 
             // Verify the token
-            const decoded = jwt.verify(token, process.env.SECRET_KEY);
+            let decoded;
+            try {
+                  decoded = jwt.verify(token, process.env.SECRET_KEY);
+                  console.log("[isAuthenticated] Decoded token:", decoded);
+            } catch (verifyError) {
+                  console.error("[isAuthenticated] Token verification error:", verifyError.message);
+                  return res.status(401).json({
+                        message: "Invalid or expired token",
+                        success: false,
+                  });
+            }
 
             // Ensure the decoded token has the required userId
             if (!decoded || !decoded.userId) {
