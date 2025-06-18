@@ -7,7 +7,11 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(
-    () => localStorage.getItem("token") || null
+    () => {
+      const storedToken = localStorage.getItem("token");
+      console.log("[AuthContext] Token fetched from localStorage:", storedToken);
+      return storedToken || null;
+    }
   );
   const [loading, setLoading] = useState(true);
   const apiUrl = import.meta.env.VITE_BACKEND_URL;
@@ -15,12 +19,13 @@ export const AuthProvider = ({ children }) => {
     const checkAuth = async () => {
       try {
         const token = localStorage.getItem("token");
+        console.log("[AuthContext] Token fetched for checkAuth:", token);
         const response = await axios.get(
           `${apiUrl}/api/v1/check-auth`,
           {
             headers: { 
               "Content-Type": "application/json",
-              ...(token && { "Authorization": `Bearer ${token}` })
+              ...(token && (console.log("[AuthContext] Sending token in Authorization header (checkAuth):", token), { "Authorization": `Bearer ${token}` }))
             },
           }
         );
@@ -32,6 +37,7 @@ export const AuthProvider = ({ children }) => {
           if (response.data.token) {
             setToken(response.data.token);
             localStorage.setItem("token", response.data.token);
+            console.log("[AuthContext] Token stored in localStorage:", response.data.token);
           }
         }
       } catch (error) {
@@ -52,7 +58,7 @@ export const AuthProvider = ({ children }) => {
         {
           headers: { 
             "Content-Type": "application/json",
-            ...(token && { "Authorization": `Bearer ${token}` })
+            ...(token && (console.log("[AuthContext] Sending token in Authorization header (login):", token), { "Authorization": `Bearer ${token}` }))
           },
         }
       );
@@ -63,6 +69,7 @@ export const AuthProvider = ({ children }) => {
         if (response.data.token) {
           setToken(response.data.token);
           localStorage.setItem("token", response.data.token);
+          console.log("[AuthContext] Token stored in localStorage (login):", response.data.token);
         }
 
         return { success: true };
@@ -80,13 +87,14 @@ export const AuthProvider = ({ children }) => {
       await axios.get(`${apiUrl}/api/v1/logout`, {
         headers: { 
           "Content-Type": "application/json",
-          ...(token && { "Authorization": `Bearer ${token}` })
+          ...(token && (console.log("[AuthContext] Sending token in Authorization header (logout):", token), { "Authorization": `Bearer ${token}` }))
         },
       });
 
       setUser(null);
       setToken(null);
       localStorage.removeItem("token");
+      console.log("[AuthContext] Token removed from localStorage (logout)");
 
       return { success: true };
     } catch (error) {
