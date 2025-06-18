@@ -7,12 +7,12 @@ import axios from "axios";
 const useGetAllJobs = () => {
   const dispatch = useDispatch();
   const searchedQuery = useSelector((store) => store.job.searchedQuery);
-
+  const apiUrl = import.meta.env.VITE_BACKEND_URL;
   useEffect(() => {
     const fetchAllJobs = async () => {
       try {
         const res = await axios.get(
-          `${JOB_API_END_POINT}/get`,
+          `${apiUrl}/api/v1/job/get`,
           { withCredentials: true }
         );
 

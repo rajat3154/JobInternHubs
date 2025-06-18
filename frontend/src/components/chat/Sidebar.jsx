@@ -17,7 +17,7 @@ const Sidebar = ({ selectedUser, onSelectUser, unreadCounts, setUnreadCounts, so
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const [latestMessages, setLatestMessages] = useState({});
-
+  const apiUrl = import.meta.env.VITE_BACKEND_URL;
   // Load unread counts from localStorage on component mount
   useEffect(() => {
     const savedUnreadCounts = localStorage.getItem('unreadCounts');
@@ -68,8 +68,12 @@ const Sidebar = ({ selectedUser, onSelectUser, unreadCounts, setUnreadCounts, so
       try {
         setLoading(true);
         const [studentsResponse, recruitersResponse] = await Promise.all([
-          axios.get("http://localhost:8000/api/v1/student/students", { withCredentials: true }),
-          axios.get("http://localhost:8000/api/v1/recruiter/recruiters", { withCredentials: true })
+          axios.get(`${apiUrl}/api/v1/student/students`, {
+            withCredentials: true,
+          }),
+          axios.get(`${apiUrl}/api/v1/recruiter/recruiters`, {
+            withCredentials: true,
+          }),
         ]);
 
         // Process students data
@@ -115,7 +119,10 @@ const Sidebar = ({ selectedUser, onSelectUser, unreadCounts, setUnreadCounts, so
   useEffect(() => {
     const fetchLatestMessages = async () => {
       try {
-        const res = await axios.get("http://localhost:8000/api/v1/message/latest-per-user", { withCredentials: true });
+        const res = await axios.get(
+          `${apiUrl}/api/v1/message/latest-per-user`,
+          { withCredentials: true }
+        );
         if (res.data.success) {
           setLatestMessages(res.data.latestMessages || {});
         }
@@ -180,7 +187,7 @@ const Sidebar = ({ selectedUser, onSelectUser, unreadCounts, setUnreadCounts, so
 
   const logoutHandler = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/api/v1/logout", {
+      const res = await axios.get(`${apiUrl}/api/v1/logout`, {
         withCredentials: true,
       });
       navigate("/login");

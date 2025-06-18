@@ -25,7 +25,7 @@ const RecruiterSignup = () => {
   const { loading } = useSelector((store) => store.auth);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
+  const apiUrl = import.meta.env.VITE_BACKEND_URL;
   const changeEventHandler = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
   };
@@ -52,7 +52,7 @@ const RecruiterSignup = () => {
     try {
       dispatch(setLoading(true));
       const res = await axios.post(
-        `${RECRUITER_API_END_POINT}/signup`,
+        `${apiUrl}/api/v1/recruiter/signup`,
         formData,
         {
           headers: {

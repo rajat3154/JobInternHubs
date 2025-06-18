@@ -11,7 +11,7 @@ import { Input } from "../ui/input";
 import { ChevronLeft, Paperclip, Send, Smile, Video } from "lucide-react";
 import toast from "react-hot-toast";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 const MessageContainer = ({ selectedUser, unreadCounts, setUnreadCounts, socket }) => {
       const { user: authUser } = useSelector((state) => state.auth);
@@ -25,7 +25,7 @@ const MessageContainer = ({ selectedUser, unreadCounts, setUnreadCounts, socket 
       const messagesEndRef = useRef(null);
       const [isTyping, setIsTyping] = useState(false);
       const typingTimeoutRef = useRef(null);
-
+      const apiUrl = import.meta.env.VITE_BACKEND_URL;
       const isUserOnline = (userId) => {
             return Array.isArray(onlineUsers) && onlineUsers.includes(userId);
       };
@@ -45,8 +45,8 @@ const MessageContainer = ({ selectedUser, unreadCounts, setUnreadCounts, socket 
                   try {
                         setLoading(true);
                         const response = await axios.get(
-                              `${API_BASE_URL}/api/v1/message/${selectedUser._id}`,
-                              { withCredentials: true }
+                          `${apiUrl}/api/v1/message/${selectedUser._id}`,
+                          { withCredentials: true }
                         );
 
                         if (response.data.success) {
@@ -121,9 +121,9 @@ const MessageContainer = ({ selectedUser, unreadCounts, setUnreadCounts, socket 
 
             try {
                   const response = await axios.post(
-                        `${API_BASE_URL}/api/v1/message/send/${selectedUser._id}`,
-                        { message: newMessage.trim() },
-                        { withCredentials: true }
+                    `${apiUrl}/api/v1/message/send/${selectedUser._id}`,
+                    { message: newMessage.trim() },
+                    { withCredentials: true }
                   );
 
                   if (response.data.success && response.data.newMessage) {

@@ -26,7 +26,7 @@ const Login = () => {
   }, []);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
+  const apiUrl = import.meta.env.VITE_BACKEND_URL;
   const changeEventHandler = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
   };
@@ -42,7 +42,7 @@ const Login = () => {
     try {
       dispatch(setLoading(true));
 
-      const res = await axios.post(`${USER_API_END_POINT}/login`, input, {
+      const res = await axios.post(`${apiUrl}/api/v1/login`, input, {
         headers: {
           "Content-Type": "application/json",
         },

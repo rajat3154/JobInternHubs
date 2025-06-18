@@ -20,17 +20,14 @@ const Internships = () => {
     useState([]);
   const [showPostInternship, setShowPostInternship] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-
+  const apiUrl = import.meta.env.VITE_BACKEND_URL;
   const fetchInternships = async () => {
     try {
-      const response = await fetch(
-        "http://localhost:8000/api/v1/internship/get",
-        {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-        }
-      );
+      const response = await fetch(`${apiUrl}/api/v1/internship/get`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
       const data = await response.json();
       console.log(data);
       if (data.success && Array.isArray(data.internships)) {
@@ -44,14 +41,11 @@ const Internships = () => {
 
   const fetchRecruiterInternships = async () => {
     try {
-      const response = await fetch(
-        "http://localhost:8000/api/v1/internship/recruiter",
-        {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-        }
-      );
+      const response = await fetch(`${apiUrl}/api/v1/internship/recruiter`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
       const data = await response.json();
 
       if (data.success && Array.isArray(data.internships)) {

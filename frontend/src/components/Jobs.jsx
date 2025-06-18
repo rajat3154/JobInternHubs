@@ -16,37 +16,38 @@ const Jobs = () => {
   const { allJobs } = useSelector((store) => store.job);
   const [filteredJobs, setFilteredJobs] = useState(allJobs);
   const [showPostJob, setShowPostJob] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
+  const [savedJobs, setSavedJobs] = useState({});
   const [currentJobId, setCurrentJobId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const apiUrl = import.meta.env.VITE_BACKEND_URL;
 
   useEffect(() => {
-    // Check if job is saved when component mounts or job changes
-    const checkIfJobSaved = async () => {
-      if (!user || !currentJobId) return;
-      try {
-        const response = await fetch(
-          `http://localhost:8000/api/v1/job/is-saved/${currentJobId}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            credentials: "include",
+    // Fetch saved status for all jobs when jobs are loaded
+    const fetchSavedStatus = async () => {
+      if (!user || !allJobs.length) return;
+      const statusObj = {};
+      for (const job of allJobs) {
+        try {
+          const response = await fetch(
+            `${apiUrl}/api/v1/job/is-saved/${job._id}`,
+            {
+              method: "GET",
+              headers: { "Content-Type": "application/json" },
+              credentials: "include",
+            }
+          );
+          if (response.ok) {
+            const data = await response.json();
+            statusObj[job._id] = data.isSaved;
           }
-        );
-
-        if (response.ok) {
-          const data = await response.json();
-          setIsSaved(data.isSaved);
+        } catch (error) {
+          statusObj[job._id] = false;
         }
-      } catch (error) {
-        console.error("Error checking saved status:", error);
       }
+      setSavedJobs(statusObj);
     };
-
-    checkIfJobSaved();
-  }, [currentJobId, user]);
+    fetchSavedStatus();
+  }, [allJobs, user]);
 
   const handleSaveJob = async (e, jobId) => {
     e.stopPropagation();
@@ -54,28 +55,18 @@ const Jobs = () => {
       navigate("/signup");
       return;
     }
-
-    setCurrentJobId(jobId);
-
     try {
-      const response = await fetch(
-        `http://localhost:8000/api/v1/job/save-job/${jobId}`,
+      const response = await fetch(`${apiUrl}/api/v1/job/save-job/${jobId}`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           credentials: "include",
         }
       );
-
-      if (!response.ok) {
-        throw new Error("Failed to save job");
-      }
-
+      if (!response.ok) throw new Error("Failed to save job");
       const data = await response.json();
       if (data.success) {
-        setIsSaved(data.isSaved);
+        setSavedJobs((prev) => ({ ...prev, [jobId]: data.isSaved }));
         toast.success(data.message);
       }
     } catch (error) {
@@ -86,14 +77,11 @@ const Jobs = () => {
 
   const fetchJobs = async () => {
     try {
-      const response = await fetch(
-        "http://localhost:8000/api/v1/job/recruiter/get",
-        {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-        }
-      );
+      const response = await fetch(`${apiUrl}/api/v1/job/recruiter/get`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
       
       const data = await response.json();
       console.log(data);
@@ -116,7 +104,7 @@ const Jobs = () => {
 
   const fetchAllJobs = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/v1/job/get", {
+      const response = await fetch(`${apiUrl}/api/v1/job/get`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -266,17 +254,13 @@ const Jobs = () => {
                       onClick={(e) => handleSaveJob(e, job._id)}
                       variant="outline"
                       className={`px-3 py-1 text-sm font-bold rounded-md flex items-center gap-2 cursor-pointer ${
-                        isSaved && currentJobId === job._id
+                        savedJobs[job._id]
                           ? "bg-blue-500 hover:bg-blue-600 text-black"
                           : "bg-black hover:bg-gray-700"
                       }`}
                     >
-                      {isSaved && currentJobId === job._id ? (
-                        <BookmarkCheck size={16} />
-                      ) : (
-                        <Bookmark size={16} />
-                      )}
-                      {isSaved && currentJobId === job._id ? "Saved" : "Save Job"}
+                      {savedJobs[job._id] ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
+                      {savedJobs[job._id] ? "Saved" : "Save Job"}
                     </Button>
                   )}
                 </div>

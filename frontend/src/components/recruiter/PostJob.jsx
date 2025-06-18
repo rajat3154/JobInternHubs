@@ -41,7 +41,7 @@ const PostJob = ({ onClose, onSuccess }) => {
           .filter(Boolean),
       };
 
-      const res = await axios.post(`${JOB_API_END_POINT}/post`, payload, {
+      const res = await axios.post(`${apiUrl}/api/v1/job/post`, payload, {
         headers: {
           "Content-Type": "application/json",
         },

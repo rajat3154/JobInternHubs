@@ -48,25 +48,25 @@ const RecruiterProfile = () => {
   const isOwnProfile = !id || id === currentUser?._id;
   const [followersOpen, setFollowersOpen] = useState(false);
   const [followingOpen, setFollowingOpen] = useState(false);
-
+  const apiUrl = import.meta.env.VITE_BACKEND_URL;
   useEffect(() => {
     const fetchAllData = async () => {
       try {
         setLoading(true);
         const profileRes = await axios.get(
-          `http://localhost:8000/api/v1/recruiter/profile/${isOwnProfile ? currentUser._id : id}`,
+          `${apiUrl}/api/v1/recruiter/profile/${isOwnProfile ? currentUser._id : id}`,
           { withCredentials: true }
         );
         setProfileData(profileRes.data.data);
 
         const jobsRes = await axios.get(
-          `http://localhost:8000/api/v1/job/recruiter/${isOwnProfile ? currentUser._id : id}`,
+          `${apiUrl}/api/v1/job/recruiter/${isOwnProfile ? currentUser._id : id}`,
           { withCredentials: true }
         );
         setPostedJobs(jobsRes.data.jobs || []);
 
         const internshipsRes = await axios.get(
-          `http://localhost:8000/api/v1/internship/recruiter/${isOwnProfile ? currentUser._id : id}`,
+          `${apiUrl}/api/v1/internship/recruiter/${isOwnProfile ? currentUser._id : id}`,
           { withCredentials: true }
         );
         setInternships(internshipsRes.data.internships || []);
@@ -90,14 +90,14 @@ const RecruiterProfile = () => {
 
         const [followersRes, followingRes] = await Promise.all([
           axios.get(
-            `http://localhost:8000/api/v1/follow/followers/${profileData._id}/recruiter`,
+            `${apiUrl}/api/v1/follow/followers/${profileData._id}/recruiter`,
             {
               headers: { "Content-Type": "application/json" },
               withCredentials: true,
             }
           ),
           axios.get(
-            `http://localhost:8000/api/v1/follow/following/${profileData._id}/recruiter`,
+            `${apiUrl}/api/v1/follow/following/${profileData._id}/recruiter`,
             {
               headers: { "Content-Type": "application/json" },
               withCredentials: true,
@@ -125,7 +125,7 @@ const RecruiterProfile = () => {
 
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/v1/follow/check/${currentUser._id}/${profileData._id}`,
+          `${apiUrl}/api/v1/follow/check/${currentUser._id}/${profileData._id}`,
           {
             headers: { "Content-Type": "application/json" },
             withCredentials: true,
@@ -147,7 +147,7 @@ const RecruiterProfile = () => {
       const jobPromises = postedJobs.map(async (job) => {
         try {
           const response = await axios.get(
-            `http://localhost:8000/api/v1/job/is-saved/${job._id}`,
+            `${apiUrl}/api/v1/job/is-saved/${job._id}`,
             { withCredentials: true }
           );
           return { jobId: job._id, isSaved: response.data.isSaved };
@@ -160,7 +160,7 @@ const RecruiterProfile = () => {
       const internshipPromises = internships.map(async (internship) => {
         try {
           const response = await axios.get(
-            `http://localhost:8000/api/v1/internship/is-saved-internship/${internship._id}`,
+            `${apiUrl}/api/v1/internship/is-saved-internship/${internship._id}`,
             { withCredentials: true }
           );
           return { internshipId: internship._id, isSaved: response.data.isSaved };
@@ -195,10 +195,9 @@ const RecruiterProfile = () => {
 
   const handleJobPosted = async () => {
     try {
-      const jobsRes = await axios.get(
-        "http://localhost:8000/api/v1/job/recruiter",
-        { withCredentials: true }
-      );
+      const jobsRes = await axios.get(`${apiUrl}/api/v1/job/recruiter`, {
+        withCredentials: true,
+      });
       console.log("Response from job refetch after posting:", jobsRes.data);
       setPostedJobs(jobsRes.data.jobs || []);
       setShowPostJob(false);
@@ -218,7 +217,7 @@ const RecruiterProfile = () => {
   const handleInternshipPosted = async () => {
     try {
       const internshipsRes = await axios.get(
-        "http://localhost:8000/api/v1/internship/recruiter",
+        `${apiUrl}/api/v1/internship/recruiter`,
         { withCredentials: true }
       );
       setInternships(internshipsRes.data.internships || []);
@@ -230,10 +229,9 @@ const RecruiterProfile = () => {
 
   const handleDeleteJob = async (jobId) => {
     try {
-      await axios.delete(
-        `http://localhost:8000/api/v1/job/delete/${jobId}`,
-        { withCredentials: true }
-      );
+      await axios.delete(`${apiUrl}/api/v1/job/delete/${jobId}`, {
+        withCredentials: true,
+      });
       setPostedJobs(postedJobs.filter(job => job._id !== jobId));
       toast.success("Job deleted successfully");
     } catch (error) {
@@ -243,10 +241,9 @@ const RecruiterProfile = () => {
 
   const handleDeleteInternship = async (internshipId) => {
     try {
-      await axios.delete(
-        `http://localhost:8000/api/v1/internship/delete/${internshipId}`,
-        { withCredentials: true }
-      );
+      await axios.delete(`${apiUrl}/api/v1/internship/delete/${internshipId}`, {
+        withCredentials: true,
+      });
       setInternships(internships.filter(internship => internship._id !== internshipId));
       toast.success("Internship deleted successfully");
     } catch (error) {
@@ -257,7 +254,7 @@ const RecruiterProfile = () => {
   const handleSaveJob = async (jobId) => {
     try {
       const response = await axios.post(
-        `http://localhost:8000/api/v1/job/save-job/${jobId}`,
+        `${apiUrl}/api/v1/job/save-job/${jobId}`,
         {},
         { withCredentials: true }
       );
@@ -279,7 +276,7 @@ const RecruiterProfile = () => {
   const handleSaveInternship = async (internshipId) => {
     try {
       const response = await axios.post(
-        `http://localhost:8000/api/v1/internship/save-internship/${internshipId}`,
+        `${apiUrl}/api/v1/internship/save-internship/${internshipId}`,
         {},
         { withCredentials: true }
       );
@@ -307,7 +304,7 @@ const RecruiterProfile = () => {
     try {
       setFollowLoading(true);
       const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/follow/toggle`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/follow/toggle`,
         {
           targetUserId: profileData._id,
           targetUserType: 'recruiter'
@@ -336,7 +333,7 @@ const RecruiterProfile = () => {
     try {
       setFollowersLoading(true);
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/follow/followers/${profileData._id}`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/follow/followers/${profileData._id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -355,7 +352,7 @@ const RecruiterProfile = () => {
     try {
       setFollowingLoading(true);
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/follow/following/${profileData._id}`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/follow/following/${profileData._id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -375,7 +372,7 @@ const RecruiterProfile = () => {
 
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/follow/status/${profileData._id}`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/follow/status/${profileData._id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`

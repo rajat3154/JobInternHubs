@@ -17,7 +17,7 @@ const JobDescription = () => {
   const [isApplied, setIsApplied] = useState(false);
   const [isApplying, setIsApplying] = useState(false);
   const [applicationStatus, setApplicationStatus] = useState(null);
-
+  const apiUrl = import.meta.env.VITE_BACKEND_URL;
   console.log("📌 Job ID from URL:", jobId);
   console.log("👤 Logged-in user:", user);
 
@@ -26,7 +26,7 @@ const JobDescription = () => {
     const fetchSingleJob = async () => {
       try {
         console.log("Fetching single job...");
-        const res = await axios.get(`${JOB_API_END_POINT}/get/${jobId}`, {
+        const res = await axios.get(`${apiUrl}/api/v1/job/get/${jobId}`, {
           withCredentials: true,
         });
         if (res.data.success) {
@@ -80,7 +80,7 @@ const JobDescription = () => {
     console.log("Attempting to apply for job...");
     try {
       const res = await axios.post(
-        `${APPLICATION_API_END_POINT}/apply/${jobId}`,
+        `${apiUrl}/api/v1/application/apply/${jobId}`,
         {},
         { withCredentials: true }
       );

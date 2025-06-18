@@ -33,7 +33,7 @@ const Admin = () => {
   // Search state
   const [studentSearchTerm, setStudentSearchTerm] = useState("");
   const [recruiterSearchTerm, setRecruiterSearchTerm] = useState("");
-
+  const apiUrl = import.meta.env.VITE_BACKEND_URL;
   useEffect(() => {
     if (user?.role !== "admin") {
       navigate("/");
@@ -44,7 +44,7 @@ const Admin = () => {
   useEffect(() => {
     const fetchRequests = async () => {
       try {
-        const res = await fetch(`${ADMIN_API_END_POINT}/recruiter-requests`, {
+        const res = await fetch(`${apiUrl}/api/v1/admin/recruiter-requests`, {
           credentials: "include",
         });
         const data = await res.json();
@@ -65,7 +65,7 @@ const Admin = () => {
   useEffect(() => {
     const fetchRecruiters = async () => {
       try {
-        const response = await fetch(`${RECRUITER_API_END_POINT}/recruiters`, {
+        const response = await fetch(`${apiUrl}/api/v1/recruiter/recruiters`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -96,7 +96,7 @@ const Admin = () => {
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const response = await fetch(`${STUDENT_API_END_POINT}/students`, {
+        const response = await fetch(`${apiUrl}/api/v1/student/students`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -172,7 +172,7 @@ const Admin = () => {
   const handleApprove = async (id) => {
     try {
       const response = await fetch(
-        `${ADMIN_API_END_POINT}/recruiter-requests/${id}/approve`,
+        `${apiUrl}/api/v1/admin/recruiter-requests/${id}/approve`,
         {
           method: "POST",
           headers: {
@@ -191,7 +191,7 @@ const Admin = () => {
 
       // Refresh recruiters list
       const recruitersResponse = await fetch(
-        `${RECRUITER_API_END_POINT}/recruiters`,
+        `${apiUrl}/api/v1/recruiter/recruiters`,
         {
           method: "GET",
           headers: {
@@ -216,7 +216,7 @@ const Admin = () => {
   const handleReject = async (id) => {
     try {
       const response = await fetch(
-        `${ADMIN_API_END_POINT}/recruiter-requests/${id}/reject`,
+        `${apiUrl}/api/v1/admin/recruiter-requests/${id}/reject`,
         {
           method: "DELETE",
           credentials: "include",
@@ -242,7 +242,7 @@ const Admin = () => {
 
     try {
       const response = await fetch(
-        `${STUDENT_API_END_POINT}/${id}`,
+        `${apiUrl}/api/v1/student/${id}`,
         {
           method: "DELETE",
           credentials: "include",
@@ -269,7 +269,7 @@ const Admin = () => {
 
     try {
       const response = await fetch(
-        `${RECRUITER_API_END_POINT}/${id}`,
+        `${apiUrl}/api/v1/recruiter/${id}`,
         {
           method: "DELETE",
           credentials: "include",

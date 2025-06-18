@@ -71,7 +71,7 @@ const Profile = () => {
   const { user: currentUser } = useSelector((store) => store.auth);
   const { userId, userType } = useParams();
   const navigate = useNavigate();
-
+  const apiUrl = import.meta.env.VITE_BACKEND_URL;
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
@@ -79,9 +79,9 @@ const Profile = () => {
         let endpoint;
 
         if (userId && userType) {
-          endpoint = `http://localhost:8000/api/v1/${userType.toLowerCase()}/${userId}`;
+          endpoint = `${apiUrl}/api/v1/${userType.toLowerCase()}/${userId}`;
         } else if (currentUser?._id) {
-          endpoint = `http://localhost:8000/api/v1/${currentUser.role.toLowerCase()}/${
+          endpoint = `${apiUrl}/api/v1/${currentUser.role.toLowerCase()}/${
             currentUser._id
           }`;
         } else {
@@ -120,14 +120,14 @@ const Profile = () => {
 
         const [followersRes, followingRes] = await Promise.all([
           axios.get(
-            `http://localhost:8000/api/v1/follow/followers/${profileUser._id}/${profileUser.role}`,
+            `${apiUrl}/api/v1/follow/followers/${profileUser._id}/${profileUser.role}`,
             {
               headers: { "Content-Type": "application/json" },
               withCredentials: true,
             }
           ),
           axios.get(
-            `http://localhost:8000/api/v1/follow/following/${profileUser._id}/${profileUser.role}`,
+            `${apiUrl}/api/v1/follow/following/${profileUser._id}/${profileUser.role}`,
             {
               headers: { "Content-Type": "application/json" },
               withCredentials: true,
@@ -152,12 +152,9 @@ const Profile = () => {
   const fetchAppliedJobs = async () => {
     try {
       setJobsLoading(true);
-      const response = await axios.get(
-        "http://localhost:8000/api/v1/application/get",
-        {
-          withCredentials: true,
-        }
-      );
+      const response = await axios.get(`${apiUrl}/api/v1/application/get`, {
+        withCredentials: true,
+      });
       console.log("Applied Jobs Response:", response.data);
 
       if (response.data.success) {
@@ -174,7 +171,7 @@ const Profile = () => {
     try {
       setInternshipsLoading(true);
       const response = await axios.get(
-        "http://localhost:8000/api/v1/application/internships/get",
+        `${apiUrl}/api/v1/application/internships/get`,
         { withCredentials: true }
       );
       
@@ -193,12 +190,9 @@ const Profile = () => {
   const fetchSavedJobs = async () => {
     try {
       setSavedJobsLoading(true);
-      const response = await axios.get(
-        "http://localhost:8000/api/v1/job/saved",
-        {
-          withCredentials: true,
-        }
-      );
+      const response = await axios.get(`${apiUrl}/api/v1/job/saved`, {
+        withCredentials: true,
+      });
       console.log("Saved jobs : ",response);
       if (response.data.success) {
         setSavedJobs(response.data.savedJobs);
@@ -214,12 +208,9 @@ const Profile = () => {
   const fetchSavedInternships = async () => {
     try {
       setSavedInternshipsLoading(true);
-      const response = await axios.get(
-        "http://localhost:8000/api/v1/internship/saved",
-        {
-          withCredentials: true,
-        }
-      );
+      const response = await axios.get(`${apiUrl}/api/v1/internship/saved`, {
+        withCredentials: true,
+      });
       if (response.data.success) {
         setSavedInternships(response.data.savedInternships);
       }
@@ -340,9 +331,10 @@ const Profile = () => {
     }
 
     try {
-      const endpoint = type === 'job' 
-        ? `http://localhost:8000/api/v1/job/save-job/${itemId}`
-        : `http://localhost:8000/api/v1/internship/save-internship/${itemId}`;
+      const endpoint =
+        type === "job"
+          ? `${apiUrl}/api/v1/job/save-job/${itemId}`
+          : `${apiUrl}/api/v1/internship/save-internship/${itemId}`;
 
       const response = await axios.post(endpoint, {}, { withCredentials: true });
 

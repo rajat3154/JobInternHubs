@@ -27,7 +27,7 @@ const StudentSignup = () => {
   const { loading } = useSelector((store) => store.auth);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
+  const apiUrl = import.meta.env.VITE_BACKEND_URL;
   const changeEventHandler = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
   };
@@ -56,7 +56,7 @@ const StudentSignup = () => {
       dispatch(setLoading(true));
 
       const res = await axios.post(
-        `${STUDENT_API_END_POINT}/signup`,
+        `${apiUrl}/api/v1/student/signup`,
         formData,
         {
           headers: {

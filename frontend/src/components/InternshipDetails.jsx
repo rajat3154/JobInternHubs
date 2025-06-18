@@ -42,11 +42,11 @@ const InternshipDetails = () => {
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [pdfError, setPdfError] = useState(null);
-
+  const apiUrl = import.meta.env.VITE_BACKEND_URL;
   const fetchInternshipDetails = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:8000/api/v1/internship/get/${id}`,
+        `${apiUrl}/api/v1/internship/get/${id}`,
         { withCredentials: true }
       );
       setInternship(data.internship);
@@ -60,7 +60,7 @@ const InternshipDetails = () => {
   const fetchApplicants = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:8000/api/v1/application/internship/${id}/applicants`,
+        `${apiUrl}/api/v1/application/internship/${id}/applicants`,
         { withCredentials: true }
       );
       setApplicants(
@@ -76,7 +76,7 @@ const InternshipDetails = () => {
     try {
       setLoading(true);
       const res = await axios.post(
-        `http://localhost:8000/api/v1/application/internship/status/${appId}/update`,
+        `${apiUrl}/api/v1/application/internship/status/${appId}/update`,
         { status },
         { withCredentials: true }
       );

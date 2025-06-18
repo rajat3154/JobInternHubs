@@ -10,12 +10,12 @@ const SendInput = () => {
   const dispatch = useDispatch();
   const { selectedUser } = useSelector((store) => store.auth);
   const { messages } = useSelector((store) => store.message);
-
+  const apiUrl = import.meta.env.VITE_BACKEND_URL;
   const onSubmitHandler = async (e) => {
     e.preventDefault();
     try {
       const res = await axios.post(
-        `${BASE_URL}/api/v1/message/send/${selectedUser?._id}`,
+        `${apiUrl}/api/v1/message/send/${selectedUser?._id}`,
         { message },
         {
           headers: {

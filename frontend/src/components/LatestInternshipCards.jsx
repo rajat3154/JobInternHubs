@@ -12,14 +12,14 @@ const LatestInternshipCards = ({ internship }) => {
   const { user } = useSelector((store) => store.auth);
   const [isSaved, setIsSaved] = useState(false);
   const isRecruiter = user?.role === "recruiter";
-
+  const apiUrl = import.meta.env.VITE_BACKEND_URL;
   // Check saved status on mount
   useEffect(() => {
     const checkSavedStatus = async () => {
       if (!user) return;
       try {
         const res = await fetch(
-          `http://localhost:8000/api/v1/internship/is-saved-internship/${internship._id}`,
+          `${apiUrl}/api/v1/internship/is-saved-internship/${internship._id}`,
           {
             method: "GET",
             headers: { "Content-Type": "application/json" },
@@ -48,7 +48,7 @@ const LatestInternshipCards = ({ internship }) => {
 
     try {
       const res = await fetch(
-        `http://localhost:8000/api/v1/internship/save-internship/${internship._id}`,
+        `${apiUrl}/api/v1/internship/save-internship/${internship._id}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

@@ -40,11 +40,11 @@ const JobDetails = () => {
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [pdfError, setPdfError] = useState(null);
-
+  const apiUrl = import.meta.env.VITE_BACKEND_URL;
   const fetchJobWithApplicants = async () => {
     try {
       const res = await axios.get(
-        `${APPLICATION_API_END_POINT}/${jobId}/applicants`,
+        `${apiUrl}/api/v1/application/${jobId}/applicants`,
         { withCredentials: true }
       );
 
@@ -64,7 +64,7 @@ const JobDetails = () => {
     try {
       setLoading(true);
       const res = await axios.post(
-        `${APPLICATION_API_END_POINT}/status/${appId}/update`,
+        `${apiUrl}/api/v1/application/status/${appId}/update`,
         { status },
         { withCredentials: true }
       );
