@@ -9,9 +9,10 @@ import { USER_API_END_POINT } from "@/utils/constant";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 import { setUser } from "@/redux/authSlice";
+import { useAuth } from "../../context/AuthContext";
 
 const Navbar = () => {
-  const { user } = useSelector((store) => store.auth);
+  const { user } = useAuth();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const apiUrl = import.meta.env.VITE_BACKEND_URL;
