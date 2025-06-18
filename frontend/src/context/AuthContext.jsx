@@ -18,8 +18,10 @@ export const AuthProvider = ({ children }) => {
         const response = await axios.get(
           `${apiUrl}/api/v1/check-auth`,
           {
-            withCredentials: true,
-            headers: { "Content-Type": "application/json" },
+            headers: { 
+              "Content-Type": "application/json",
+              ...(token && { "Authorization": `Bearer ${token}` })
+            },
           }
         );
 
@@ -48,8 +50,10 @@ export const AuthProvider = ({ children }) => {
         `${apiUrl}/api/v1/login`,
         { email, password },
         {
-          withCredentials: true,
-          headers: { "Content-Type": "application/json" },
+          headers: { 
+            "Content-Type": "application/json",
+            ...(token && { "Authorization": `Bearer ${token}` })
+          },
         }
       );
 
@@ -74,8 +78,10 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       await axios.get(`${apiUrl}/api/v1/logout`, {
-        withCredentials: true,
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          ...(token && { "Authorization": `Bearer ${token}` })
+        },
       });
 
       setUser(null);
