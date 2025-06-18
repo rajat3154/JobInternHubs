@@ -21,50 +21,32 @@ const Login = () => {
     role: "",
   });
 
-  const { loading } = useSelector((store) => store.auth);
-  const { login: authLogin, token: authToken } = useAuth();
-  useEffect(() => {
-    dispatch(setLoading(false)); // Reset loading on mount
-  }, []);
+  const { login: authLogin, user: authUser, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const apiUrl = import.meta.env.VITE_BACKEND_URL;
   const changeEventHandler = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
   };
 
+  useEffect(() => {
+    if (authUser) {
+      if (authUser.role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/");
+      }
+    }
+  }, [authUser, navigate]);
+
   const submitHandler = async (e) => {
     e.preventDefault();
-
     if (!input.role) {
       toast.error("Please select a role");
       return;
     }
-
-    try {
-      dispatch(setLoading(true));
-
-      // Use AuthContext login
-      const loginRes = await authLogin(input.email, input.password, input.role);
-      console.log("[Login.jsx] AuthContext login response:", loginRes);
-      console.log("[Login.jsx] Token after login:", localStorage.getItem("token"));
-
-      if (loginRes.success) {
-        dispatch(setUser(loginRes.user));
-        if (input.role === "admin") {
-          navigate("/admin");
-        } else {
-          navigate("/");
-        }
-        toast.success("Login successful");
-      } else {
-        toast.error(loginRes.error || "Login failed");
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error(error.response?.data?.message || "Login failed");
-    } finally {
-      dispatch(setLoading(false));
+    const loginRes = await authLogin(input.email, input.password, input.role);
+    if (!loginRes.success) {
+      toast.error(loginRes.error || "Login failed");
     }
   };
 
@@ -153,7 +135,7 @@ const Login = () => {
               transition={{ delay: 0.4 }}
               className="pt-2"
             >
-              {loading ? (
+              {authLoading ? (
                 <Button
                   className="w-full bg-blue-600 hover:bg-blue-700"
                   disabled
