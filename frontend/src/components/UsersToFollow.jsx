@@ -26,6 +26,7 @@ const UsersToFollow = () => {
         console.log("👤 Current user:", user);
 
         const token = localStorage.getItem("token");
+        console.log("[UsersToFollow] Token fetched from localStorage:", token);
         const studentsRes = await axios.get(`${apiUrl}/api/v1/students`, {
           headers: { "Content-Type": "application/json", ...(token && { "Authorization": `Bearer ${token}` }) },
         });

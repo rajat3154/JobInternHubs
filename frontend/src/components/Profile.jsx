@@ -89,6 +89,7 @@ const Profile = () => {
         }
 
         const token = localStorage.getItem("token");
+        console.log("[Profile] Token fetched from localStorage:", token);
         const response = await axios.get(endpoint, {
           headers: { "Content-Type": "application/json", ...(token && { "Authorization": `Bearer ${token}` }) },
         });

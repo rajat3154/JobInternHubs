@@ -19,6 +19,7 @@ const LatestInternshipCards = ({ internship }) => {
       if (!user) return;
       try {
         const token = localStorage.getItem("token");
+        console.log("[LatestInternshipCards] Token fetched from localStorage:", token);
         const res = await fetch(
           `${apiUrl}/api/v1/internship/is-saved-internship/${internship._id}`,
           {
