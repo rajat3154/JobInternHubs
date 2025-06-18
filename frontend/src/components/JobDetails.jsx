@@ -24,6 +24,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import "react-pdf/dist/esm/Page/TextLayer.css";
+import { useAuth } from "../context/AuthContext";
 
 // Set up the worker for react-pdf
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
@@ -41,11 +42,13 @@ const JobDetails = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const [pdfError, setPdfError] = useState(null);
   const apiUrl = import.meta.env.VITE_BACKEND_URL;
+  const { token, isAuthenticated } = useAuth();
+
   const fetchJobWithApplicants = async () => {
     try {
       const res = await axios.get(
         `${apiUrl}/api/v1/application/${jobId}/applicants`,
-        { withCredentials: true }
+        { withCredentials: true, headers: { Authorization: `Bearer ${token}` } }
       );
 
       if (res.data.success) {
@@ -66,7 +69,7 @@ const JobDetails = () => {
       const res = await axios.post(
         `${apiUrl}/api/v1/application/status/${appId}/update`,
         { status },
-        { withCredentials: true }
+        { withCredentials: true, headers: { Authorization: `Bearer ${token}` } }
       );
       if (res.data.success) {
         toast.success(res.data.message);

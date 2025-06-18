@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import LatestJobCards from "./LatestJobCards";
 import { toast } from "sonner";
 import { useSearch } from "../context/SearchContext";
+import { useAuth } from "../context/AuthContext";
 
 const LatestJobs = () => {
   const [latestJobs, setLatestJobs] = useState([]);
@@ -12,11 +13,15 @@ const LatestJobs = () => {
   const { user } = useSelector((store) => store.auth);
   const { searchQuery } = useSearch();
   const apiUrl = import.meta.env.VITE_BACKEND_URL;
+  const { token, isAuthenticated } = useAuth();
   const fetchLatestJobs = async () => {
     try {
       const response = await fetch(`${apiUrl}/api/v1/job/latest`, {
         method: "GET",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
       });
 
       const data = await response.json();
@@ -74,7 +79,10 @@ const LatestJobs = () => {
     try {
       const response = await fetch(`${apiUrl}/api/v1/job/save-job/${jobId}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
         credentials: "include",
       });
 

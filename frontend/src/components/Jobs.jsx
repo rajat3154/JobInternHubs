@@ -8,6 +8,7 @@ import PostJob from "./recruiter/PostJob";
 import { Bookmark, BookmarkCheck, Search } from "lucide-react";
 import { toast } from "sonner";
 import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
+import { useAuth } from "../context/AuthContext";
 
 const Jobs = () => {
   const navigate = useNavigate();
@@ -20,6 +21,7 @@ const Jobs = () => {
   const [currentJobId, setCurrentJobId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const apiUrl = import.meta.env.VITE_BACKEND_URL;
+  const { token, isAuthenticated } = useAuth();
 
   useEffect(() => {
     // Fetch saved status for all jobs when jobs are loaded
@@ -79,7 +81,10 @@ const Jobs = () => {
     try {
       const response = await fetch(`${apiUrl}/api/v1/job/recruiter/get`, {
         method: "GET",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
         credentials: "include",
       });
       
@@ -108,6 +113,7 @@ const Jobs = () => {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
         },
         credentials: "include",
       });
