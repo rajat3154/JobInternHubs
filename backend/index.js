@@ -29,7 +29,9 @@ const allowedOrigins = [
     "http://localhost:5173"
 ];
 const corsOptions = {
-    origin: "https://thejobinternhub.vercel.app",
+    origin: (origin, callback) => {
+        callback(null, true); // Allow all origins dynamically
+    },
     credentials: true,
 };
 
