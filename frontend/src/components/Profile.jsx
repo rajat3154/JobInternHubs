@@ -88,11 +88,9 @@ const Profile = () => {
           return;
         }
 
+        const token = localStorage.getItem("token");
         const response = await axios.get(endpoint, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
+          headers: { "Content-Type": "application/json", ...(token && { "Authorization": `Bearer ${token}` }) },
         });
         setProfileUser(response.data.data);
       } catch (error) {
@@ -116,19 +114,18 @@ const Profile = () => {
         setFollowersLoading(true);
         setFollowingLoading(true);
 
+        const token = localStorage.getItem("token");
         const [followersRes, followingRes] = await Promise.all([
           axios.get(
             `${apiUrl}/api/v1/follow/followers/${profileUser?._id}/${profileUser?.role}`,
             {
-              headers: { "Content-Type": "application/json" },
-              withCredentials: true,
+              headers: { "Content-Type": "application/json", ...(token && { "Authorization": `Bearer ${token}` }) },
             }
           ),
           axios.get(
             `${apiUrl}/api/v1/follow/following/${profileUser?._id}/${profileUser?.role}`,
             {
-              headers: { "Content-Type": "application/json" },
-              withCredentials: true,
+              headers: { "Content-Type": "application/json", ...(token && { "Authorization": `Bearer ${token}` }) },
             }
           ),
         ]);
@@ -150,8 +147,9 @@ const Profile = () => {
   const fetchAppliedJobs = async () => {
     try {
       setJobsLoading(true);
+      const token = localStorage.getItem("token");
       const response = await axios.get(`${apiUrl}/api/v1/application/get`, {
-        withCredentials: true,
+        headers: { ...(token && { "Authorization": `Bearer ${token}` }) },
       });
       console.log("Applied Jobs Response:", response.data);
 
@@ -168,9 +166,10 @@ const Profile = () => {
   const fetchAppliedInternships = async () => {
     try {
       setInternshipsLoading(true);
+      const token = localStorage.getItem("token");
       const response = await axios.get(
         `${apiUrl}/api/v1/application/internships/get`,
-        { withCredentials: true }
+        { headers: { ...(token && { "Authorization": `Bearer ${token}` }) } }
       );
       
 
@@ -188,8 +187,9 @@ const Profile = () => {
   const fetchSavedJobs = async () => {
     try {
       setSavedJobsLoading(true);
+      const token = localStorage.getItem("token");
       const response = await axios.get(`${apiUrl}/api/v1/job/saved`, {
-        withCredentials: true,
+        headers: { ...(token && { "Authorization": `Bearer ${token}` }) },
       });
       console.log("Saved jobs : ",response);
       if (response.data.success) {
@@ -206,8 +206,9 @@ const Profile = () => {
   const fetchSavedInternships = async () => {
     try {
       setSavedInternshipsLoading(true);
+      const token = localStorage.getItem("token");
       const response = await axios.get(`${apiUrl}/api/v1/internship/saved`, {
-        withCredentials: true,
+        headers: { ...(token && { "Authorization": `Bearer ${token}` }) },
       });
       if (response.data.success) {
         setSavedInternships(response.data.savedInternships);
@@ -329,12 +330,13 @@ const Profile = () => {
     }
 
     try {
+      const token = localStorage.getItem("token");
       const endpoint =
         type === "job"
           ? `${apiUrl}/api/v1/job/save-job/${itemId}`
           : `${apiUrl}/api/v1/internship/save-internship/${itemId}`;
 
-      const response = await axios.post(endpoint, {}, { withCredentials: true });
+      const response = await axios.post(endpoint, {}, { headers: { ...(token && { "Authorization": `Bearer ${token}` }) } });
 
       if (response.data.success) {
         toast.success(response.data.message);

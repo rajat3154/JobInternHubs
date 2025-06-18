@@ -24,7 +24,6 @@ export const SocketProvider = ({ children }) => {
 
     const newSocket = io(`${apiUrl}`, {
       autoConnect: true,
-      withCredentials: true,
       transports: ["polling", "websocket"],
       path: "/socket.io/",
       reconnectionDelay: 1000,

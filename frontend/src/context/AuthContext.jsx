@@ -14,6 +14,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
+        const token = localStorage.getItem("token");
         const response = await axios.get(
           `${apiUrl}/api/v1/check-auth`,
           {

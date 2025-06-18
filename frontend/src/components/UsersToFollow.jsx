@@ -25,16 +25,13 @@ const UsersToFollow = () => {
 
         console.log("👤 Current user:", user);
 
-        const [studentsRes, recruitersRes] = await Promise.all([
-          axios.get(`${apiUrl}/api/v1/students`, {
-            headers: { "Content-Type": "application/json" },
-            withCredentials: true,
-          }),
-          axios.get(`${apiUrl}/api/v1/recruiter/recruiters`, {
-            headers: { "Content-Type": "application/json" },
-            withCredentials: true,
-          }),
-        ]);
+        const token = localStorage.getItem("token");
+        const studentsRes = await axios.get(`${apiUrl}/api/v1/students`, {
+          headers: { "Content-Type": "application/json", ...(token && { "Authorization": `Bearer ${token}` }) },
+        });
+        const recruitersRes = await axios.get(`${apiUrl}/api/v1/recruiter/recruiters`, {
+          headers: { "Content-Type": "application/json", ...(token && { "Authorization": `Bearer ${token}` }) },
+        });
 
         console.log("🎓 Students response:", studentsRes.data);
         console.log("💼 Recruiters response:", recruitersRes.data);
@@ -48,8 +45,7 @@ const UsersToFollow = () => {
         const followingRes = await axios.get(
           `${apiUrl}/api/v1/follow/following/${user?._id}/${user?.role}`,
           {
-            headers: { "Content-Type": "application/json" },
-            withCredentials: true,
+            headers: { "Content-Type": "application/json", ...(token && { "Authorization": `Bearer ${token}` }) },
           }
         );
 
