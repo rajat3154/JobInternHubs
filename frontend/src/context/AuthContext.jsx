@@ -50,11 +50,11 @@ export const AuthProvider = ({ children }) => {
     checkAuth();
   }, []);
 
-  const login = async (email, password) => {
+  const login = async (email, password, role) => {
     try {
       const response = await axios.post(
         `${apiUrl}/api/v1/login`,
-        { email, password },
+        { email, password, role },
         {
           headers: { 
             "Content-Type": "application/json",
