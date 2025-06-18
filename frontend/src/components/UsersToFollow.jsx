@@ -27,6 +27,12 @@ const UsersToFollow = () => {
 
         const token = localStorage.getItem("token");
         console.log("[UsersToFollow] Token fetched from localStorage:", token);
+        if (!token) {
+          console.warn("[UsersToFollow] No token found, skipping user fetch.");
+          setLoading(false);
+          setError("Not authenticated. Please log in.");
+          return;
+        }
         const studentsRes = await axios.get(`${apiUrl}/api/v1/students`, {
           headers: { "Content-Type": "application/json", ...(token && { "Authorization": `Bearer ${token}` }) },
         });
