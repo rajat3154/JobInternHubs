@@ -15,7 +15,7 @@ const userSockets = new Map();
 export const initSocket = (server) => {
       io = new Server(server, {
             cors: {
-                  origin: "*", // Allow all origins
+                  origin: "https://thejobinternhub.vercel.app", // Allow only production frontend
                   methods: ["GET", "POST"],
                   credentials: true,
                   allowedHeaders: ["Content-Type"]
