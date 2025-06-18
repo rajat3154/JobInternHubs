@@ -18,16 +18,12 @@ const LatestInternshipCards = ({ internship }) => {
     const checkSavedStatus = async () => {
       if (!user) return;
       try {
-        const token = localStorage.getItem("token");
-        console.log("[LatestInternshipCards] Token fetched from localStorage:", token);
         const res = await fetch(
           `${apiUrl}/api/v1/internship/is-saved-internship/${internship._id}`,
           {
             method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              ...(token && { "Authorization": `Bearer ${token}` })
-            },
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
           }
         );
 

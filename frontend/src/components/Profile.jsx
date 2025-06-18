@@ -81,17 +81,20 @@ const Profile = () => {
         if (userId && userType) {
           endpoint = `${apiUrl}/api/v1/${userType.toLowerCase()}/${userId}`;
         } else if (currentUser?._id) {
-          endpoint = `${apiUrl}/api/v1/${currentUser?.role?.toLowerCase()}/$${currentUser?._id}`;
+          endpoint = `${apiUrl}/api/v1/${currentUser.role.toLowerCase()}/${
+            currentUser._id
+          }`;
         } else {
           toast.error("No user ID available");
           setLoading(false);
           return;
         }
 
-        const token = localStorage.getItem("token");
-        console.log("[Profile] Token fetched from localStorage:", token);
         const response = await axios.get(endpoint, {
-          headers: { "Content-Type": "application/json", ...(token && { "Authorization": `Bearer ${token}` }) },
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
         });
         setProfileUser(response.data.data);
       } catch (error) {
@@ -115,18 +118,19 @@ const Profile = () => {
         setFollowersLoading(true);
         setFollowingLoading(true);
 
-        const token = localStorage.getItem("token");
         const [followersRes, followingRes] = await Promise.all([
           axios.get(
-            `${apiUrl}/api/v1/follow/followers/${profileUser?._id}/${profileUser?.role}`,
+            `${apiUrl}/api/v1/follow/followers/${profileUser._id}/${profileUser.role}`,
             {
-              headers: { "Content-Type": "application/json", ...(token && { "Authorization": `Bearer ${token}` }) },
+              headers: { "Content-Type": "application/json" },
+              withCredentials: true,
             }
           ),
           axios.get(
-            `${apiUrl}/api/v1/follow/following/${profileUser?._id}/${profileUser?.role}`,
+            `${apiUrl}/api/v1/follow/following/${profileUser._id}/${profileUser.role}`,
             {
-              headers: { "Content-Type": "application/json", ...(token && { "Authorization": `Bearer ${token}` }) },
+              headers: { "Content-Type": "application/json" },
+              withCredentials: true,
             }
           ),
         ]);
@@ -148,9 +152,8 @@ const Profile = () => {
   const fetchAppliedJobs = async () => {
     try {
       setJobsLoading(true);
-      const token = localStorage.getItem("token");
       const response = await axios.get(`${apiUrl}/api/v1/application/get`, {
-        headers: { ...(token && { "Authorization": `Bearer ${token}` }) },
+        withCredentials: true,
       });
       console.log("Applied Jobs Response:", response.data);
 
@@ -167,10 +170,9 @@ const Profile = () => {
   const fetchAppliedInternships = async () => {
     try {
       setInternshipsLoading(true);
-      const token = localStorage.getItem("token");
       const response = await axios.get(
         `${apiUrl}/api/v1/application/internships/get`,
-        { headers: { ...(token && { "Authorization": `Bearer ${token}` }) } }
+        { withCredentials: true }
       );
       
 
@@ -188,9 +190,8 @@ const Profile = () => {
   const fetchSavedJobs = async () => {
     try {
       setSavedJobsLoading(true);
-      const token = localStorage.getItem("token");
       const response = await axios.get(`${apiUrl}/api/v1/job/saved`, {
-        headers: { ...(token && { "Authorization": `Bearer ${token}` }) },
+        withCredentials: true,
       });
       console.log("Saved jobs : ",response);
       if (response.data.success) {
@@ -207,9 +208,8 @@ const Profile = () => {
   const fetchSavedInternships = async () => {
     try {
       setSavedInternshipsLoading(true);
-      const token = localStorage.getItem("token");
       const response = await axios.get(`${apiUrl}/api/v1/internship/saved`, {
-        headers: { ...(token && { "Authorization": `Bearer ${token}` }) },
+        withCredentials: true,
       });
       if (response.data.success) {
         setSavedInternships(response.data.savedInternships);
@@ -225,7 +225,7 @@ const Profile = () => {
   // Add a function to check if viewing own profile
   const isOwnProfile = () => {
     if (userId && userType) {
-      return currentUser?._id === userId && currentUser?.role?.toLowerCase() === userType?.toLowerCase();
+      return currentUser?._id === userId && currentUser?.role.toLowerCase() === userType.toLowerCase();
     }
     return true; // If no userId/userType in params, it's the current user's profile
   };
@@ -284,7 +284,7 @@ const Profile = () => {
       _id: profileUser._id,
       fullName: profileUser.fullname || profileUser.companyname,
       email: profileUser.email,
-      role: profileUser.role?.toLowerCase(),
+      role: profileUser.role.toLowerCase(),
       profilePhoto: profileUser.profile?.profilePhoto,
       identifier:
         profileUser.role === "STUDENT"
@@ -331,13 +331,12 @@ const Profile = () => {
     }
 
     try {
-      const token = localStorage.getItem("token");
       const endpoint =
         type === "job"
           ? `${apiUrl}/api/v1/job/save-job/${itemId}`
           : `${apiUrl}/api/v1/internship/save-internship/${itemId}`;
 
-      const response = await axios.post(endpoint, {}, { headers: { ...(token && { "Authorization": `Bearer ${token}` }) } });
+      const response = await axios.post(endpoint, {}, { withCredentials: true });
 
       if (response.data.success) {
         toast.success(response.data.message);
@@ -620,7 +619,7 @@ const Profile = () => {
                               className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-700/50 cursor-pointer transition-colors"
                               onClick={() => {
                                 navigate(
-                                  `/profile/${follower.role?.toLowerCase()}/${
+                                  `/profile/${follower.role.toLowerCase()}/${
                                     follower._id
                                   }`
                                 );
@@ -698,7 +697,7 @@ const Profile = () => {
                               className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-700/50 cursor-pointer transition-colors"
                               onClick={() => {
                                 navigate(
-                                  `/profile/${followed.role?.toLowerCase()}/${
+                                  `/profile/${followed.role.toLowerCase()}/${
                                     followed._id
                                   }`
                                 );

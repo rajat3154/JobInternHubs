@@ -25,20 +25,16 @@ const UsersToFollow = () => {
 
         console.log("👤 Current user:", user);
 
-        const token = localStorage.getItem("token");
-        console.log("[UsersToFollow] Token fetched from localStorage:", token);
-        if (!token) {
-          console.warn("[UsersToFollow] No token found, skipping user fetch.");
-          setLoading(false);
-          setError("Not authenticated. Please log in.");
-          return;
-        }
-        const studentsRes = await axios.get(`${apiUrl}/api/v1/students`, {
-          headers: { "Content-Type": "application/json", ...(token && { "Authorization": `Bearer ${token}` }) },
-        });
-        const recruitersRes = await axios.get(`${apiUrl}/api/v1/recruiter/recruiters`, {
-          headers: { "Content-Type": "application/json", ...(token && { "Authorization": `Bearer ${token}` }) },
-        });
+        const [studentsRes, recruitersRes] = await Promise.all([
+          axios.get(`${apiUrl}/api/v1/students`, {
+            headers: { "Content-Type": "application/json" },
+            withCredentials: true,
+          }),
+          axios.get(`${apiUrl}/api/v1/recruiter/recruiters`, {
+            headers: { "Content-Type": "application/json" },
+            withCredentials: true,
+          }),
+        ]);
 
         console.log("🎓 Students response:", studentsRes.data);
         console.log("💼 Recruiters response:", recruitersRes.data);
@@ -50,9 +46,10 @@ const UsersToFollow = () => {
         console.log("💼 Recruiters fetched:", recruiters.length);
 
         const followingRes = await axios.get(
-          `${apiUrl}/api/v1/follow/following/${user?._id}/${user?.role}`,
+          `${apiUrl}/api/v1/follow/following/${user._id}/${user.role}`,
           {
-            headers: { "Content-Type": "application/json", ...(token && { "Authorization": `Bearer ${token}` }) },
+            headers: { "Content-Type": "application/json" },
+            withCredentials: true,
           }
         );
 

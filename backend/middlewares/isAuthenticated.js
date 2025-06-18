@@ -6,15 +6,11 @@ dotenv.config();
 // Authentication Middleware
 const isAuthenticated = async (req, res, next) => {
       try {
-            // Retrieve token from cookies or Authorization header
-            let token = req.cookies.token;
-            if (!token && req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
-                  token = req.headers.authorization.split(' ')[1];
-            }
-            console.log("[isAuthenticated] Received token:", token);
+            // Retrieve token from cookies
+            const token = req.cookies.token;
+            console.log(token)
             // Check if token exists
             if (!token) {
-                  console.warn("[isAuthenticated] No token provided");
                   return res.status(401).json({
                         message: "User not authenticated, token missing",
                         success: false,
@@ -22,17 +18,7 @@ const isAuthenticated = async (req, res, next) => {
             }
 
             // Verify the token
-            let decoded;
-            try {
-                  decoded = jwt.verify(token, process.env.SECRET_KEY);
-                  console.log("[isAuthenticated] Decoded token:", decoded);
-            } catch (verifyError) {
-                  console.error("[isAuthenticated] Token verification error:", verifyError.message);
-                  return res.status(401).json({
-                        message: "Invalid or expired token",
-                        success: false,
-                  });
-            }
+            const decoded = jwt.verify(token, process.env.SECRET_KEY);
 
             // Ensure the decoded token has the required userId
             if (!decoded || !decoded.userId) {

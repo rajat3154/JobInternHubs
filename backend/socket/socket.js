@@ -12,16 +12,10 @@ const server = http.createServer(app);
 let io;
 const userSockets = new Map();
 
-const allowedOrigins = [
-  process.env.FRONTEND_URL || "http://localhost:5173",
-  "http://localhost:5173",
-  "https://thejobinternhub.vercel.app"
-];
-
 export const initSocket = (server) => {
       io = new Server(server, {
             cors: {
-                  origin: allowedOrigins,
+                  origin: "*", // Allow all origins
                   methods: ["GET", "POST"],
                   credentials: true,
                   allowedHeaders: ["Content-Type"]

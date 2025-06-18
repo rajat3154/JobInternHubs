@@ -12,7 +12,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { setLoading, setUser } from "@/redux/authSlice";
 import { Loader2, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
-import { useAuth } from "../../context/AuthContext";
 
 const Login = () => {
   const [input, setInput] = useState({
@@ -21,32 +20,49 @@ const Login = () => {
     role: "",
   });
 
-  const { login: authLogin, user: authUser, loading: authLoading } = useAuth();
+  const { loading } = useSelector((store) => store.auth);
+  useEffect(() => {
+    dispatch(setLoading(false)); // Reset loading on mount
+  }, []);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const apiUrl = import.meta.env.VITE_BACKEND_URL;
   const changeEventHandler = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
   };
 
-  useEffect(() => {
-    if (authUser) {
-      if (authUser.role === "admin") {
-        navigate("/admin");
-      } else {
-        navigate("/");
-      }
-    }
-  }, [authUser, navigate]);
-
   const submitHandler = async (e) => {
     e.preventDefault();
+
     if (!input.role) {
       toast.error("Please select a role");
       return;
     }
-    const loginRes = await authLogin(input.email, input.password, input.role);
-    if (!loginRes.success) {
-      toast.error(loginRes.error || "Login failed");
+
+    try {
+      dispatch(setLoading(true));
+
+      const res = await axios.post(`${apiUrl}/api/v1/login`, input, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
+
+      if (res.data.success) {
+        dispatch(setUser(res.data.user));
+        if (input.role === "admin") {
+          navigate("/admin");
+        } else {
+          navigate("/");
+        }
+        toast.success(res.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response?.data?.message || "Login failed");
+    } finally {
+      dispatch(setLoading(false));
     }
   };
 
@@ -135,7 +151,7 @@ const Login = () => {
               transition={{ delay: 0.4 }}
               className="pt-2"
             >
-              {authLoading ? (
+              {loading ? (
                 <Button
                   className="w-full bg-blue-600 hover:bg-blue-700"
                   disabled

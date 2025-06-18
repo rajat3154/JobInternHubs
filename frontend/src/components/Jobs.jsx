@@ -77,14 +77,9 @@ const Jobs = () => {
 
   const fetchJobs = async () => {
     try {
-      const token = localStorage.getItem("token");
-      console.log("[Jobs] Token fetched from localStorage (fetchJobs):", token);
       const response = await fetch(`${apiUrl}/api/v1/job/recruiter/get`, {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token && { "Authorization": `Bearer ${token}` }),
-        },
+        headers: { "Content-Type": "application/json" },
         credentials: "include",
       });
       
@@ -109,13 +104,10 @@ const Jobs = () => {
 
   const fetchAllJobs = async () => {
     try {
-      const token = localStorage.getItem("token");
-      console.log("[Jobs] Token fetched from localStorage (fetchAllJobs):", token);
       const response = await fetch(`${apiUrl}/api/v1/job/get`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          ...(token && { "Authorization": `Bearer ${token}` }),
         },
         credentials: "include",
       });
