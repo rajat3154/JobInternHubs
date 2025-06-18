@@ -6,8 +6,11 @@ dotenv.config();
 // Authentication Middleware
 const isAuthenticated = async (req, res, next) => {
       try {
-            // Retrieve token from cookies
-            const token = req.cookies.token;
+            // Retrieve token from cookies or Authorization header
+            let token = req.cookies.token;
+            if (!token && req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+                  token = req.headers.authorization.split(' ')[1];
+            }
             console.log(token)
             // Check if token exists
             if (!token) {

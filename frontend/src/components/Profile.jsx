@@ -81,9 +81,7 @@ const Profile = () => {
         if (userId && userType) {
           endpoint = `${apiUrl}/api/v1/${userType.toLowerCase()}/${userId}`;
         } else if (currentUser?._id) {
-          endpoint = `${apiUrl}/api/v1/${currentUser.role.toLowerCase()}/${
-            currentUser._id
-          }`;
+          endpoint = `${apiUrl}/api/v1/${currentUser?.role?.toLowerCase()}/$${currentUser?._id}`;
         } else {
           toast.error("No user ID available");
           setLoading(false);
@@ -120,14 +118,14 @@ const Profile = () => {
 
         const [followersRes, followingRes] = await Promise.all([
           axios.get(
-            `${apiUrl}/api/v1/follow/followers/${profileUser._id}/${profileUser.role}`,
+            `${apiUrl}/api/v1/follow/followers/${profileUser?._id}/${profileUser?.role}`,
             {
               headers: { "Content-Type": "application/json" },
               withCredentials: true,
             }
           ),
           axios.get(
-            `${apiUrl}/api/v1/follow/following/${profileUser._id}/${profileUser.role}`,
+            `${apiUrl}/api/v1/follow/following/${profileUser?._id}/${profileUser?.role}`,
             {
               headers: { "Content-Type": "application/json" },
               withCredentials: true,
@@ -225,7 +223,7 @@ const Profile = () => {
   // Add a function to check if viewing own profile
   const isOwnProfile = () => {
     if (userId && userType) {
-      return currentUser?._id === userId && currentUser?.role.toLowerCase() === userType.toLowerCase();
+      return currentUser?._id === userId && currentUser?.role?.toLowerCase() === userType?.toLowerCase();
     }
     return true; // If no userId/userType in params, it's the current user's profile
   };
@@ -284,7 +282,7 @@ const Profile = () => {
       _id: profileUser._id,
       fullName: profileUser.fullname || profileUser.companyname,
       email: profileUser.email,
-      role: profileUser.role.toLowerCase(),
+      role: profileUser.role?.toLowerCase(),
       profilePhoto: profileUser.profile?.profilePhoto,
       identifier:
         profileUser.role === "STUDENT"
@@ -619,7 +617,7 @@ const Profile = () => {
                               className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-700/50 cursor-pointer transition-colors"
                               onClick={() => {
                                 navigate(
-                                  `/profile/${follower.role.toLowerCase()}/${
+                                  `/profile/${follower.role?.toLowerCase()}/${
                                     follower._id
                                   }`
                                 );
@@ -697,7 +695,7 @@ const Profile = () => {
                               className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-700/50 cursor-pointer transition-colors"
                               onClick={() => {
                                 navigate(
-                                  `/profile/${followed.role.toLowerCase()}/${
+                                  `/profile/${followed.role?.toLowerCase()}/${
                                     followed._id
                                   }`
                                 );

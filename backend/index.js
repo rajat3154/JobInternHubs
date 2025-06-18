@@ -23,10 +23,14 @@ const server = createServer(app);
 // Initialize Socket.IO immediately after creating the server
 const io = initSocket(server);
 
+// Allow only the deployed frontend and local frontend for development
+const allowedOrigins = [
+    process.env.FRONTEND_URL || "http://localhost:5173",
+    "http://localhost:5173",
+    "https://thejobinternhub.vercel.app"
+];
 const corsOptions = {
-    origin: (origin, callback) => {
-        callback(null, true); // Allow all origins dynamically
-    },
+    origin: allowedOrigins,
     credentials: true,
 };
 

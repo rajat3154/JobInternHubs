@@ -46,7 +46,7 @@ const UsersToFollow = () => {
         console.log("💼 Recruiters fetched:", recruiters.length);
 
         const followingRes = await axios.get(
-          `${apiUrl}/api/v1/follow/following/${user._id}/${user.role}`,
+          `${apiUrl}/api/v1/follow/following/${user?._id}/${user?.role}`,
           {
             headers: { "Content-Type": "application/json" },
             withCredentials: true,
