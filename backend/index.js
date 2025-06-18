@@ -28,12 +28,12 @@ const allowedOrigins = [
     process.env.FRONTEND_URL || "http://localhost:5173",
     "http://localhost:5173"
 ];
-const corsOptions = {
-    origin: allowedOrigins,
-    credentials: true,
-};
+// const corsOptions = {
+//     origin: allowedOrigins,
+//     credentials: true,
+// };
 
-app.use(cors({ origin: true, credentials: true }));
+app.use(cors({ origin: '*'}));
 app.use(express.json());
 app.use(cookieParser());
 
